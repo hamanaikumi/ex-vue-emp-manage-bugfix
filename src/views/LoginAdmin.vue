@@ -82,7 +82,7 @@ export default class LoginAdmin extends Vue {
       password: this.password,
     });
     console.dir("response:" + JSON.stringify(response));
-    if (response.data == "success") {
+    if (response.data.status === "success") {
       // 従業員一覧に遷移する
       this.$router.push("/employeeList");
     } else {
