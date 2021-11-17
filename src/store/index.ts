@@ -92,21 +92,6 @@ export default new Vuex.Store({
       return state.employees;
     },
     /**
-     * IDから従業員を検索し返す.
-     *
-     * @param state ステート
-     * @returns 従業員情報
-     */
-    getEmployeeById(state) {
-      // 渡されたIDで絞り込んだEmployeeオブジェクトを1件返す
-      return (employeeId: number) => {
-        const employees = state.employees.filter(
-          (employee) => employee.id == employeeId
-        );
-        return employees[0];
-      };
-    },
-    /**
      * 従業員を名前で部分一致検索をする.
      *
      * @param state ステート

@@ -134,12 +134,13 @@ export default class RegisterAdmin extends Vue {
         password: this.password,
       });
       console.dir("response:" + JSON.stringify(response));
-      
-      if (response.data == "success") {
+
+      if (response.data.status === "success") {
         this.$router.push("/loginAdmin");
       } else {
         this.errorRegister = "登録できませんでした";
       }
+    }
   }
 }
 </script>
