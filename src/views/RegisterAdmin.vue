@@ -55,6 +55,7 @@
         </div>
         <div class="row">
           <div class="input-field col s6">
+            <div>{{ errorRegister }}</div>
             <button
               class="btn btn-large btn-register waves-effect waves-light"
               type="button"
@@ -88,6 +89,8 @@ export default class RegisterAdmin extends Vue {
   private mailAddress = "";
   // パスワード
   private password = "";
+  // 登録エラー時のメッセージ
+  private errorRegister = "";
 
   //姓エラーメッセージ
   private errorFirstName = "";
@@ -131,9 +134,12 @@ export default class RegisterAdmin extends Vue {
         password: this.password,
       });
       console.dir("response:" + JSON.stringify(response));
-
-      this.$router.push("/loginAdmin");
-    }
+      
+      if (response.data == "success") {
+        this.$router.push("/loginAdmin");
+      } else {
+        this.errorRegister = "登録できませんでした";
+      }
   }
 }
 </script>
