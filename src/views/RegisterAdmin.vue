@@ -4,6 +4,7 @@
       <form class="col s12" id="reg-form">
         <div class="row">
           <div class="input-field col s6">
+            <div>{{ errorLastName }}</div>
             <input
               id="last_name"
               type="text"
@@ -14,6 +15,7 @@
             <label for="last_name">姓</label>
           </div>
           <div class="input-field col s6">
+            <div>{{ errorFirstName }}</div>
             <input
               id="first_name"
               type="text"
@@ -26,6 +28,7 @@
         </div>
         <div class="row">
           <div class="input-field col s12">
+            <div>{{ errorMailAddress }}</div>
             <input
               id="email"
               type="email"
@@ -38,6 +41,7 @@
         </div>
         <div class="row">
           <div class="input-field col s12">
+            <div>{{ errorPassword }}</div>
             <input
               id="password"
               type="password"
@@ -88,6 +92,15 @@ export default class RegisterAdmin extends Vue {
   // 登録エラー時のメッセージ
   private errorRegister = "";
 
+  //姓エラーメッセージ
+  private errorFirstName = "";
+  //名エラーメッセージ
+  private errorLastName = "";
+  //メール用エラーメッセージ
+  private errorMailAddress = "";
+  //パスワード用エラーメッセージ
+  private errorPassword = "";
+
   /**
    * 管理者情報を登録する.
    *
@@ -97,17 +110,36 @@ export default class RegisterAdmin extends Vue {
    */
   async registerAdmin(): Promise<void> {
     // 管理者登録処理
-    const response = await axios.post(`${config.EMP_WEBAPI_URL}/insert`, {
-      name: this.lastName + " " + this.firstName,
-      mailAddress: this.mailAddress,
-      password: this.password,
-    });
-    console.dir("response:" + JSON.stringify(response));
-    if (response.data == "success") {
-      this.$router.push("/loginAdmin");
-    } else {
-      this.errorRegister = "登録できませんでした";
+    if (this.firstName == "") {
+      this.errorFirstName = "入力してください";
     }
+    if (this.lastName == "") {
+      this.errorLastName = "入力してください";
+    }
+    if (this.mailAddress == "") {
+      this.errorMailAddress = "入力してください";
+    }
+    if (this.password == "") {
+      this.errorPassword = "入力してください";
+    }
+    if (
+      this.firstName != "" &&
+      this.lastName != "" &&
+      this.mailAddress != "" &&
+      this.password != ""
+    ) {
+      const response = await axios.post(`${config.EMP_WEBAPI_URL}/insert`, {
+        name: this.lastName + " " + this.firstName,
+        mailAddress: this.mailAddress,
+        password: this.password,
+      });
+      console.dir("response:" + JSON.stringify(response));
+      
+      if (response.data == "success") {
+        this.$router.push("/loginAdmin");
+      } else {
+        this.errorRegister = "登録できませんでした";
+      }
   }
 }
 </script>
