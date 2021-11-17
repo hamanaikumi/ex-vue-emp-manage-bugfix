@@ -4,7 +4,7 @@
       <form class="col s12" id="reg-form">
         <div class="row">
           <div class="input-field col s6">
-            <div>{{ errorFirstName }}</div>
+            <div>{{ errorLastName }}</div>
             <input
               id="last_name"
               type="text"
@@ -15,7 +15,7 @@
             <label for="last_name">姓</label>
           </div>
           <div class="input-field col s6">
-            <div>{{ errorLastName }}</div>
+            <div>{{ errorFirstName }}</div>
             <input
               id="first_name"
               type="text"
