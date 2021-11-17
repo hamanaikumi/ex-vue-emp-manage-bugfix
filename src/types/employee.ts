@@ -1,3 +1,5 @@
+import { da } from "date-fns/locale";
+
 /**
  * 従業員情報を表すクラス.
  *
@@ -32,6 +34,22 @@ export class Employee {
     private _dependentsCount: number
   ) {}
 
+  get formatDate(): string {
+    const NEW_DATE = new Date(this.hireDate);
+    const MOON_ADJUSTMENT = 1;
+
+    const formatYear = NEW_DATE.getFullYear();
+    const formatMonth = NEW_DATE.getMonth();
+    const formatDate = NEW_DATE.getDate();
+    return (
+      formatYear +
+      "年" +
+      (formatMonth + MOON_ADJUSTMENT) +
+      "月" +
+      formatDate +
+      "日"
+    );
+  }
   public get id(): number {
     return this._id;
   }
