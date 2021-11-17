@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 /**
  * 従業員情報を表すクラス.
  *
@@ -32,6 +34,10 @@ export class Employee {
     private _dependentsCount: number
   ) {}
 
+  get formatHireDate(): string {
+    const FORMAT_DATE = format(new Date(this.hireDate), "yyyy年MM月dd日");
+    return FORMAT_DATE;
+  }
   public get id(): number {
     return this._id;
   }

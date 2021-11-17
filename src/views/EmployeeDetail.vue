@@ -36,7 +36,7 @@
             </tr>
             <tr>
               <th nowrap>入社日</th>
-              <td><span v-html="currentEmployee.hireDate"></span></td>
+              <td><span v-html="currentEmployee.formatHireDate"></span></td>
             </tr>
             <tr>
               <th nowrap>メールアドレス</th>
@@ -64,7 +64,7 @@
             </tr>
             <tr>
               <th nowrap>給料</th>
-              <td><span v-html="currentEmployee.salary"></span>円</td>
+              <td>{{ currentEmployee.salary.toLocaleString() }}円</td>
             </tr>
             <tr>
               <th nowrap>特性</th>
