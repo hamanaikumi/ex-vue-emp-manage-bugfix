@@ -132,7 +132,7 @@ export default class EmployeeDetail extends Vue {
     "XXXX",
     0
   );
-  // currentEmployee!: Employee;
+
   // エラーメッセージ
   private errorMessage = "";
   // 画像
@@ -148,18 +148,36 @@ export default class EmployeeDetail extends Vue {
    * Vuexストア内のGetterを呼ぶ。
    * ライフサイクルフックのcreatedイベント利用
    */
-  created(): void {
+  async created(): Promise<void> {
     // 送られてきたリクエストパラメータのidをnumberに変換して取得する
     const employeeId = parseInt(this.$route.params.id);
 
-    // VuexストアのGetter、getEmployeeById()メソッドに先ほど取得したIDを渡し、１件の従業員情報を取得し、戻り値をcurrentEmployee属性に代入する
-    this.currentEmployee = this.$store.getters.getEmployeeById(employeeId);
+    // 従業員IDから1件の従業員情報を取得
+    let reloadResponse = await axios.get(
+      `http://153.127.48.168:8080/ex-emp-api/employee/${employeeId}`
+    );
+    console.dir("reloadResponse:" + JSON.stringify(reloadResponse));
+    let reloadEmployee = new Employee(
+      reloadResponse.data.employee.id,
+      reloadResponse.data.employee.name,
+      reloadResponse.data.employee.image,
+      reloadResponse.data.employee.gender,
+      reloadResponse.data.employee.hireDate,
+      reloadResponse.data.employee.mailAddress,
+      reloadResponse.data.employee.zipCode,
+      reloadResponse.data.employee.address,
+      reloadResponse.data.employee.telephone,
+      reloadResponse.data.employee.salary,
+      reloadResponse.data.employee.characteristics,
+      reloadResponse.data.employee.dependentsCount
+    );
+    this.currentEmployee = reloadEmployee;
 
     // 今取得した従業員情報から画像パスを取り出し、imgディレクトリの名前を前に付与(文字列連結)してcurrentEmployeeImage属性に代入する
-    this.currentEmployeeImage = `${config.EMP_WEBAPI_URL}/img/${this.currentEmployee.image}`;
+    this.currentEmployeeImage = `${config.EMP_WEBAPI_URL}/img/${reloadEmployee.image}`;
 
     // 今取得した従業員情報から扶養人数を取り出し、currentDependentsCount属性に代入する
-    this.currentDependentsCount = this.currentEmployee.dependentsCount;
+    this.currentDependentsCount = reloadEmployee.dependentsCount;
   }
 
   /**

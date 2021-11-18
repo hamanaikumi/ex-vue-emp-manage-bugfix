@@ -1,3 +1,4 @@
+
 <template>
   <div class="container">
     <div class="row login-page">
@@ -99,3 +100,4 @@ export default class LoginAdmin extends Vue {
   width: 600px;
 }
 </style>
+
