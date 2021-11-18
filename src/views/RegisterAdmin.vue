@@ -142,12 +142,15 @@ export default class RegisterAdmin extends Vue {
     if (this.confirmPassword == "") {
       this.errorConfirmPassword = "入力してください";
     }
-    if (
+    if (this.password !== this.confirmPassword) {
+      this.errorConfirmPassword = "パスワードが一致しません";
+      return;
+    } else if (
       this.firstName != "" &&
       this.lastName != "" &&
       this.mailAddress != "" &&
       this.password != "" &&
-      this.password === this.confirmPassword
+      this.confirmPassword != ""
     ) {
       const response = await axios.post(`${config.EMP_WEBAPI_URL}/insert`, {
         name: this.lastName + " " + this.firstName,
