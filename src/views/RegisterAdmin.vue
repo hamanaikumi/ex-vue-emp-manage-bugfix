@@ -54,6 +54,20 @@
           </div>
         </div>
         <div class="row">
+          <div class="input-field col s12">
+            <div>{{ errorConfirmPassword }}</div>
+            <input
+              id="password"
+              type="password"
+              class="validate"
+              minlength="8"
+              v-model="confirmPassword"
+              required
+            />
+            <label for="password">確認用パスワード</label>
+          </div>
+        </div>
+        <div class="row">
           <div class="input-field col s6">
             <div>{{ errorRegister }}</div>
             <button
@@ -91,7 +105,6 @@ export default class RegisterAdmin extends Vue {
   private password = "";
   // 登録エラー時のメッセージ
   private errorRegister = "";
-
   //姓エラーメッセージ
   private errorFirstName = "";
   //名エラーメッセージ
@@ -100,6 +113,10 @@ export default class RegisterAdmin extends Vue {
   private errorMailAddress = "";
   //パスワード用エラーメッセージ
   private errorPassword = "";
+  // 確認用パスワード
+  private confirmPassword = "";
+  //確認用パスワードエラーメッセージ
+  private errorConfirmPassword = "";
 
   /**
    * 管理者情報を登録する.
@@ -122,11 +139,15 @@ export default class RegisterAdmin extends Vue {
     if (this.password == "") {
       this.errorPassword = "入力してください";
     }
+    if (this.confirmPassword == "") {
+      this.errorConfirmPassword = "入力してください";
+    }
     if (
       this.firstName != "" &&
       this.lastName != "" &&
       this.mailAddress != "" &&
-      this.password != ""
+      this.password != "" &&
+      this.password === this.confirmPassword
     ) {
       const response = await axios.post(`${config.EMP_WEBAPI_URL}/insert`, {
         name: this.lastName + " " + this.firstName,
@@ -137,8 +158,10 @@ export default class RegisterAdmin extends Vue {
 
       if (response.data.status === "success") {
         this.$router.push("/loginAdmin");
+        console.log("成功");
       } else {
         this.errorRegister = "登録できませんでした";
+        console.log("失敗");
       }
     }
   }
