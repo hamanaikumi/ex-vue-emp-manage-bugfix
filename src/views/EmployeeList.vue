@@ -32,6 +32,16 @@
         </tbody>
       </table>
     </div>
+    <div class="page-button">
+      <button
+        type="button"
+        v-for="page of pages"
+        v-bind:key="page"
+        @click="onclickPage(page)"
+      >
+        {{ page }}
+      </button>
+    </div>
   </div>
 </template>
 
@@ -47,6 +57,8 @@ export default class EmployeeList extends Vue {
   private currentEmployeeList: Array<Employee> = [];
   // 従業員数
   private employeeCount = 0;
+  // ページ数
+  private pages: Array<number> = [];
 
   /**
    * Vuexストアのアクション経由で非同期でWebAPIから従業員一覧を取得する.
@@ -64,7 +76,14 @@ export default class EmployeeList extends Vue {
     // 従業員一覧情報をVuexストアから取得
     // 非同期で外部APIから取得しているので、async/await使わないとGetterで取得できない
     // ページング機能実装のため最初の10件に絞り込み
-    this.currentEmployeeList = this.$store.getters.getAllEmployees;
+    this.currentEmployeeList = this.$store.getters.getAllEmployees.slice(0, 10);
+    console.log("最初の10件：" + JSON.stringify(this.currentEmployeeList));
+    let pageNumber = Math.ceil(
+      Number(this["$store"].getters.getAllEmployeeCount) / 10
+    );
+    for (let i = 1; i <= pageNumber; i++) {
+      this.pages.push(i);
+    }
   }
   /**
    * 現在表示されている従業員一覧の数を返す.
@@ -72,7 +91,18 @@ export default class EmployeeList extends Vue {
    * @returns 現在表示されている従業員一覧の数
    */
   get getEmployeeCount(): number {
-    return this.currentEmployeeList.length;
+    return this.$store.getters.getAllEmployees.length;
+  }
+
+  /**
+   * クリックされたページに対応する従業員一覧を表示する.
+   */
+  onclickPage(page: number): void {
+    this.currentEmployeeList = this.$store.getters.getAllEmployees.slice(
+      page * 10 - 10,
+      page * 10
+    );
+    console.log(this.currentEmployeeList);
   }
 }
 </script>
@@ -88,5 +118,10 @@ export default class EmployeeList extends Vue {
   display: block;
   width: 150px;
   margin: 0 auto;
+}
+
+.page-button {
+  text-align: center;
+  margin-bottom: 10px;
 }
 </style>
