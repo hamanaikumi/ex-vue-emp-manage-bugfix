@@ -40,6 +40,39 @@
         </div>
         <div class="row">
           <div class="input-field col s12">
+            <div>{{ errorOfZipcode }}</div>
+            <input
+              id="zipcode"
+              type="text"
+              class="validate"
+              v-model.number="zipcode"
+              required
+            />
+            <label for="zipcode">郵便番号</label>
+          </div>
+          <button
+            type="button"
+            class="btn btn-large btn-serch waves-effect waves-light"
+            @click="getAddress"
+          >
+            検索
+          </button>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <div>{{ errorOfAddress }}</div>
+            <input
+              id="address"
+              type="text"
+              class="validate"
+              v-model="address"
+              required
+            />
+            <label for="address">住所</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
             <div>{{ errorOfPassword }}</div>
             <input
               id="password"
@@ -100,6 +133,10 @@ export default class RegisterAdmin extends Vue {
   private firstName = "";
   // メールアドレス
   private mailAddress = "";
+  // 住所
+  private address = "";
+  // 郵便番号
+  private zipcode = "";
   // パスワード
   private password = "";
   // 登録エラー時のメッセージ
@@ -110,6 +147,10 @@ export default class RegisterAdmin extends Vue {
   private errorOfName = "";
   //メール用エラーメッセージ
   private errorOfMailAddress = "";
+  //住所エラーメッセージ
+  private errorOfAddress = "";
+  //郵便番号エラーメッセージ
+  private errorOfZipcode = "";
   //パスワード用エラーメッセージ
   private errorOfPassword = "";
   // 確認用パスワード
@@ -132,6 +173,10 @@ export default class RegisterAdmin extends Vue {
     }
     if (this.mailAddress === "") {
       this.errorOfMailAddress = "メールアドレスが入力されていません";
+      this.hasError = true;
+    }
+    if (this.address === "") {
+      this.errorOfAddress = "住所が入力されていません";
       this.hasError = true;
     }
     if (this.password === "") {
@@ -157,6 +202,26 @@ export default class RegisterAdmin extends Vue {
     } else {
       this.errorRegister = "登録できませんでした";
       console.log("失敗");
+    }
+  }
+  // 郵便番号から住所を検索し返す
+  async getAddress(): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const axiosJsonpAdapter = require("axios-jsonp");
+    try {
+      const zipcodeResponse = await axios.get("https://zipcoda.net/api", {
+        adapter: axiosJsonpAdapter,
+        params: {
+          zipcode: this.zipcode,
+        },
+      });
+      console.dir("zipcodeResponse:" + JSON.stringify(zipcodeResponse));
+      this.address =
+        zipcodeResponse.data.items[0].pref +
+        zipcodeResponse.data.items[0].address;
+      console.dir(JSON.stringify(this.address));
+    } catch {
+      this.errorOfZipcode = "存在しない住所です";
     }
   }
 }
