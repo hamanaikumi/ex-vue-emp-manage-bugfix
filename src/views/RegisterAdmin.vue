@@ -4,7 +4,7 @@
       <form class="col s12" id="reg-form">
         <div class="row">
           <div class="input-field col s6">
-            <div>{{ errorLastName }}</div>
+            <div>{{ errorOfName }}</div>
             <input
               id="last_name"
               type="text"
@@ -15,7 +15,6 @@
             <label for="last_name">姓</label>
           </div>
           <div class="input-field col s6">
-            <div>{{ errorFirstName }}</div>
             <input
               id="first_name"
               type="text"
@@ -28,7 +27,7 @@
         </div>
         <div class="row">
           <div class="input-field col s12">
-            <div>{{ errorMailAddress }}</div>
+            <div>{{ errorOfMailAddress }}</div>
             <input
               id="email"
               type="email"
@@ -41,7 +40,7 @@
         </div>
         <div class="row">
           <div class="input-field col s12">
-            <div>{{ errorZipcode }}</div>
+            <div>{{ errorOfZipcode }}</div>
             <input
               id="zipcode"
               type="text"
@@ -61,7 +60,7 @@
         </div>
         <div class="row">
           <div class="input-field col s12">
-            <div>{{ errorAddress }}</div>
+            <div>{{ errorOfAddress }}</div>
             <input
               id="address"
               type="text"
@@ -74,7 +73,7 @@
         </div>
         <div class="row">
           <div class="input-field col s12">
-            <div>{{ errorPassword }}</div>
+            <div>{{ errorOfPassword }}</div>
             <input
               id="password"
               type="password"
@@ -88,7 +87,7 @@
         </div>
         <div class="row">
           <div class="input-field col s12">
-            <div>{{ errorConfirmPassword }}</div>
+            <div>{{ errorOfConfirmPassword }}</div>
             <input
               id="password"
               type="password"
@@ -142,22 +141,22 @@ export default class RegisterAdmin extends Vue {
   private password = "";
   // 登録エラー時のメッセージ
   private errorRegister = "";
+  // 入力値エラーチェック用
+  private hasError = false;
   //姓エラーメッセージ
-  private errorFirstName = "";
-  //名エラーメッセージ
-  private errorLastName = "";
+  private errorOfName = "";
   //メール用エラーメッセージ
-  private errorMailAddress = "";
+  private errorOfMailAddress = "";
   //住所エラーメッセージ
-  private errorAddress = "";
+  private errorOfAddress = "";
   //郵便番号エラーメッセージ
-  private errorZipcode = "";
+  private errorOfZipcode = "";
   //パスワード用エラーメッセージ
-  private errorPassword = "";
+  private errorOfPassword = "";
   // 確認用パスワード
   private confirmPassword = "";
   //確認用パスワードエラーメッセージ
-  private errorConfirmPassword = "";
+  private errorOfConfirmPassword = "";
 
   /**
    * 管理者情報を登録する.
@@ -167,49 +166,42 @@ export default class RegisterAdmin extends Vue {
    * @returns Promiseオブジェクト
    */
   async registerAdmin(): Promise<void> {
-    if (this.firstName == "") {
-      this.errorFirstName = "入力してください";
+    // 管理者登録処理
+    if (this.firstName === "" || this.lastName === "") {
+      this.errorOfName = "姓または名が入力されていません";
+      this.hasError = true;
     }
-    if (this.lastName == "") {
-      this.errorLastName = "入力してください";
+    if (this.mailAddress === "") {
+      this.errorOfMailAddress = "メールアドレスが入力されていません";
+      this.hasError = true;
     }
-    if (this.mailAddress == "") {
-      this.errorMailAddress = "入力してください";
+    if (this.address === "") {
+      this.errorOfAddress = "住所が入力されていません";
+      this.hasError = true;
     }
-    if (this.address == "") {
-      this.errorAddress = "入力してください";
+    if (this.password === "") {
+      this.errorOfPassword = "パスワードが入力されていません";
+      this.hasError = true;
+    } else if (this.password !== this.confirmPassword) {
+      this.errorOfConfirmPassword = "パスワードが一致しません";
+      this.hasError = true;
     }
-    if (this.password == "") {
-      this.errorPassword = "入力してください";
-    }
-    if (this.confirmPassword == "") {
-      this.errorConfirmPassword = "入力してください";
-    }
-    if (this.password !== this.confirmPassword) {
-      this.errorConfirmPassword = "パスワードが一致しません";
+    if (this.hasError === true) {
       return;
-    } else if (
-      this.firstName != "" &&
-      this.lastName != "" &&
-      this.mailAddress != "" &&
-      this.password != "" &&
-      this.confirmPassword != ""
-    ) {
-      const response = await axios.post(`${config.EMP_WEBAPI_URL}/insert`, {
-        name: this.lastName + " " + this.firstName,
-        mailAddress: this.mailAddress,
-        password: this.password,
-        address: this.address,
-      });
-      console.dir("response:" + JSON.stringify(response));
+    }
+    const response = await axios.post(`${config.EMP_WEBAPI_URL}/insert`, {
+      name: this.lastName + " " + this.firstName,
+      mailAddress: this.mailAddress,
+      password: this.password,
+    });
+    console.dir("response:" + JSON.stringify(response));
 
-      if (response.data.status === "success") {
-        this.$router.push("/loginAdmin");
-        console.log("成功");
-      } else {
-        this.errorRegister = "登録できませんでした";
-        console.log("失敗");
-      }
+    if (response.data.status === "success") {
+      this.$router.push("/loginAdmin");
+      console.log("成功");
+    } else {
+      this.errorRegister = "登録できませんでした";
+      console.log("失敗");
     }
   }
   // 郵便番号から住所を検索し返す
@@ -229,7 +221,7 @@ export default class RegisterAdmin extends Vue {
         zipcodeResponse.data.items[0].address;
       console.dir(JSON.stringify(this.address));
     } catch {
-      this.errorZipcode = "存在しない住所です";
+      this.errorOfZipcode = "存在しない住所です";
     }
   }
 }
