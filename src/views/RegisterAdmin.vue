@@ -150,7 +150,6 @@ export default class RegisterAdmin extends Vue {
    * @returns Promiseオブジェクト
    */
   async registerAdmin(): Promise<void> {
-    // 管理者登録処理
     if (this.firstName == "") {
       this.errorFirstName = "入力してください";
     }
@@ -159,9 +158,6 @@ export default class RegisterAdmin extends Vue {
     }
     if (this.mailAddress == "") {
       this.errorMailAddress = "入力してください";
-    }
-    if (this.zipcode == "") {
-      this.errorZipcode = "入力してください";
     }
     if (this.address == "") {
       this.errorAddress = "入力してください";
@@ -194,18 +190,21 @@ export default class RegisterAdmin extends Vue {
   async getAddress(): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const axiosJsonpAdapter = require("axios-jsonp");
-
-    const zipcodeResponse = await axios.get("https://zipcoda.net/api", {
-      adapter: axiosJsonpAdapter,
-      params: {
-        zipcode: this.zipcode,
-      },
-    });
-    console.dir("zipcodeResponse:" + JSON.stringify(zipcodeResponse));
-    this.address =
-      zipcodeResponse.data.items[0].pref +
-      zipcodeResponse.data.items[0].address;
-    console.dir(JSON.stringify(this.address));
+    try {
+      const zipcodeResponse = await axios.get("https://zipcoda.net/api", {
+        adapter: axiosJsonpAdapter,
+        params: {
+          zipcode: this.zipcode,
+        },
+      });
+      console.dir("zipcodeResponse:" + JSON.stringify(zipcodeResponse));
+      this.address =
+        zipcodeResponse.data.items[0].pref +
+        zipcodeResponse.data.items[0].address;
+      console.dir(JSON.stringify(this.address));
+    } catch {
+      this.errorZipcode = "存在しない住所です";
+    }
   }
 }
 </script>
